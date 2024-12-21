@@ -6,6 +6,8 @@ const router = require('./routes');
 
 const  errorHandler = require('./middlewares/errorHandler');
 
+const cors = require('cors');
+
 const app = express();
 app.set('port',process.env.PORT || 3000);
 
@@ -20,6 +22,7 @@ const dbOptions = {
 // middlewares
 app.use(myConn(mysql,dbOptions,'single'));
 app.use(express.json());
+app.use(cors());
 
 // routes
 app.use('/api',router);
