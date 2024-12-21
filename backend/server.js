@@ -1,9 +1,13 @@
-const express = require('express')
-const mysql = require('mysql')
-const myConn = require('express-myconnection')
+const express = require('express');
+const mysql = require('mysql');
+const myConn = require('express-myconnection');
 
-const app = express()
-app.set('port',process.env.PORT || 3000)
+const router = require('./routes');
+
+const  errorHandler = require('./middlewares/errorHandler');
+
+const app = express();
+app.set('port',process.env.PORT || 3000);
 
 const dbOptions = {
     host: 'localhost',
@@ -14,15 +18,14 @@ const dbOptions = {
 }
 
 // middlewares
-app.use(myConn(mysql,dbOptions,'single'))
-
+app.use(myConn(mysql,dbOptions,'single'));
+app.use(express.json());
 
 // routes
-app.get('/',(req,res)=>{
-    res.send('hello from the backend')
-})
+app.use('/api',router);
+app.use(errorHandler)
 
 // start server
 app.listen(app.get('port'),()=>{
     console.log('server running on port',app.get('port'));
-})
+});
