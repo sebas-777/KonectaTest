@@ -20,21 +20,31 @@ router.post('/productos',validateProduct, (req,res)=>{
         if(err) return res.send(err);
             conn.query('INSERT INTO productos set ? ',[req.body],(err)=>{ 
                 if(err) return res.status(500).send(err);
-                res.status(201).send('Producto Guardado');
+                res.status(201).json({message:'Producto creado correctamente'});
             });
     });
 });
 
-//Eliminar un producto
-router.delete('/productos/:id', (req,res)=>{
-    req.getConnection((err,conn)=>{
-        if(err) return res.status(500).res.send(err);
-            conn.query('DELETE FROM productos WHERE id = ? ',[req.params.id],(err)=>{ 
-                if(err) return res.status(500).res.send(err);
-                res.send('Producto Borrado');
-            });
+// Eliminar un producto
+// Eliminar un producto
+router.delete('/productos/:id', (req, res) => {
+    req.getConnection((err, conn) => {
+        if (err) {
+            return res.status(500).json({ error: err.message }); // Devuelve un objeto JSON
+        }
+        conn.query('DELETE FROM productos WHERE id = ?', [req.params.id], (err, result) => { 
+            if (err) {
+                return res.status(500).json({ error: err.message }); // Devuelve un objeto JSON
+            }
+            // Verifica si se eliminó algún registro
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ message: 'Producto no encontrado' }); // Devuelve un objeto JSON
+            }
+            res.json({ message: 'Producto Borrado' }); // Devuelve un objeto JSON
+        });
     });
-});  
+});
+
 
 //Actualizar un producto 
 router.put('/productos/:id',validateProduct,(req,res)=>{
